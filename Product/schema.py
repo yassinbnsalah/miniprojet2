@@ -89,11 +89,19 @@ class AddPictureMutation(graphene.Mutation , Output):
         #     return AddPictureMutation(
         #         success=False, errors=f.errors.get_json_data()
         #     )
-        print("test")
-        files = info.context.FILES['imageFile']
-        print(files.name)
-        picture = Picture(image = files)
-        picture.save()
+        print('-------------------------------------')
+        fs = list(info.context.FILES.items())
+        for f in fs:
+            print("!!!!!")
+            print(f)
+            picture = Picture(image = f[1])
+            picture.save()
+       
+        #files = info.context.FILES['ImageFile']
+        #print(files)
+        
+        #picture = Picture(image = files)
+        #picture.save()
         #picture = Picture.objects.create(image = image)
         #picture.save()
         return AddPictureMutation(picture = picture)
