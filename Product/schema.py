@@ -78,17 +78,7 @@ class AddPictureMutation(graphene.Mutation , Output):
     @classmethod
     def mutate(cls, root, info):
 
-        # file_data = {}
-        # if logo:
-        #     file_data = {"image": logo}
-        # f = AddPictureMutation.form(data, file_data)
-        # if f.is_valid():
-        #     f.save()
-        #     return AddPictureMutation(success=True)
-        # else:
-        #     return AddPictureMutation(
-        #         success=False, errors=f.errors.get_json_data()
-        #     )
+        
         print('-------------------------------------')
         fs = list(info.context.FILES.items())
         for f in fs:
