@@ -1,10 +1,12 @@
 from cmath import pi
 from dataclasses import field
-import re
+from graphql.execution.base import ResolveInfo
+from django import forms
 import graphene
 from graphene_django import DjangoObjectType
 from .models import Categorie, Picture, Produit, Produit_Image 
 from graphene_file_upload.scalars import Upload
+from graphql_auth.bases import Output
 class CategorieType(DjangoObjectType):
     class Meta:
         model = Categorie 
@@ -51,15 +53,11 @@ class DeleteCategorieMutation(graphene.Mutation):
 class ProduitType(DjangoObjectType):
     class Meta: 
         model = Produit
-        fields = ("id", "name" ,"image", "prix" , "qte" , "categorie")
+        fields = ("id", "name" , "prix" , "qte" , "categorie")
 
 class ProduitImageType(DjangoObjectType):
     class Meta:
         model = Produit_Image
-
-class PictureType(DjangoObjectType):
-    class Meta:
-        model = Picture
 class ProductImageInput(graphene.InputObjectType):
     image_id = graphene.ID(required=True)
 
@@ -67,14 +65,38 @@ class PictureInput(graphene.InputObjectType):
     image_id = graphene.ID(required = True)
 
 
-class AddPictureMutation(graphene.Mutation):
-    class Arguements : 
-        images = Upload(required = True)
+
+class PictureType(DjangoObjectType):
+    class Meta:
+        model = Picture
+        
+class AddPictureMutation(graphene.Mutation , Output):
+    
     picture = graphene.Field(PictureType)
+    
+    
     @classmethod
-    def mutate(self , info , image):
-        picture = Picture.objects.create(image = image)
-        return AddPictureMutation(images = picture)
+    def mutate(cls, root, info):
+
+        # file_data = {}
+        # if logo:
+        #     file_data = {"image": logo}
+        # f = AddPictureMutation.form(data, file_data)
+        # if f.is_valid():
+        #     f.save()
+        #     return AddPictureMutation(success=True)
+        # else:
+        #     return AddPictureMutation(
+        #         success=False, errors=f.errors.get_json_data()
+        #     )
+        print("test")
+        files = info.context.FILES['imageFile']
+        print(files.name)
+        picture = Picture(image = files)
+        picture.save()
+        #picture = Picture.objects.create(image = image)
+        #picture.save()
+        return AddPictureMutation(picture = picture)
 
         
 class AddProduitMutation(graphene.Mutation):
